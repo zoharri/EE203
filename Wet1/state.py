@@ -4,6 +4,8 @@ class State:
     def __init__(self, s=None):
         if s is None:
             self._array = [[str(3*i + j) for j in range(3)] for i in range(3)]
+            #self._array = [[str(3*i + j) for j in range(1, 4)] for i in range(3)]
+            #self._array[2][2] = str(0)
         else:
             array = [[c for c in line.split(' ')] for line in s.split(os.linesep)]
             assert len(array) == 3
@@ -68,6 +70,15 @@ class State:
         pos2 = tuple(pos2)
         new_state._array[pos2[0]][pos2[1]], new_state._array[pos1[0]][pos1[1]] = new_state._array[pos1[0]][pos1[1]], new_state._array[pos2[0]][pos2[1]]
         return new_state
+
+    def get_num_incorrect(self, other):
+        total_distance = 0
+        for i in range(1, 9):
+            self_loc = self._get_location_char(str(i))
+            other_loc = other._get_location_char(str(i))
+            if self_loc[0] != other_loc[0] or self_loc[1] != other_loc[1]:
+                total_distance += 1
+        return total_distance
 
     def get_manhattan_distance(self, other):
         total_distance = 0

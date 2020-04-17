@@ -18,10 +18,11 @@ def a_star(puzzle):
     goal = puzzle.goal_state
 
     # this is the heuristic function for of the start state
-    initial_to_goal_heuristic = initial.get_manhattan_distance(goal)
+    initial_to_goal_heuristic = initial.get_num_incorrect(goal) # MD
 
     # the fringe is the queue to pop items from
-    fringe = [(initial_to_goal_heuristic, initial)]
+    fringe = []
+    heapq.heappush(fringe, (0+initial_to_goal_heuristic, initial))
     # concluded contains states that were already resolved
     concluded = set()
     # a mapping from state (as a string) to the currently minimal distance (int).
@@ -31,9 +32,19 @@ def a_star(puzzle):
     prev = {initial.to_string(): None}
 
     while len(fringe) > 0:
-        # remove the following line and complete the algorithm
-        assert False
-
+        du, u = heapq.heappop(fringe)  # current minimum
+        if u.is_same(goal):
+            break
+        if u.to_string() not in concluded:
+            concluded.add(u.to_string())
+            curr_actions = u.get_actions()
+            for action in curr_actions:
+                v = u.apply_action(action)  #MD!
+                heapq.heappush(fringe, (du + 1 + v.get_num_incorrect(goal), v))    # added the heuristic function
+                if not v.to_string() in distances.keys() or du + 1 < distances[v.to_string()]:
+                    distances[v.to_string()] = du + 1
+                    prev[v.to_string()] = u
+    print(len(concluded))
     return prev
 
 

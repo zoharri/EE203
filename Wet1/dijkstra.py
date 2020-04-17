@@ -30,15 +30,17 @@ def dijkstra(puzzle):
 
     while len(fringe) > 0:
         du, u = heapq.heappop(fringe)   # current minimum
+        if u.is_same(goal):
+            break
         if u.to_string() not in concluded:
             concluded.add(u.to_string())
             curr_actions = u.get_actions()
-            #print("at: {}".format(u.to_string()))
             for action in curr_actions:
                 v = u.apply_action(action)
                 heapq.heappush(fringe, (du+1, v))
-                distances[v.to_string()] = du+1
-                prev[v.to_string()] = u
+                if not v.to_string() in distances.keys() or du+1 < distances[v.to_string()]:
+                    distances[v.to_string()] = du+1
+                    prev[v.to_string()] = u
 
     return prev
 

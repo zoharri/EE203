@@ -8,13 +8,11 @@ def traverse(goal_state, prev):
     '''
     curr_prev = prev[goal_state.to_string()]
     result = [(goal_state, curr_prev)]
-    print("Im alive (and hot)")
     while curr_prev:
-        curr = curr_prev
+        curr = curr_prev.copy()
         curr_prev = prev[curr.to_string()]
         result.append((curr, curr_prev))
     return result
-
 
 def print_plan(plan):
     print('plan length {}'.format(len(plan)-1))
