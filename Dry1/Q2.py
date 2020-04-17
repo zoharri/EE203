@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def calc_psi(N, X):
     psi_table = np.zeros([N, X])
     psi_table[0, :] = 1
@@ -10,8 +9,7 @@ def calc_psi(N, X):
             if n > x:
                 psi_table[n, x] = 0
             else:
-                psi_table[n, x] = np.sum(psi_table[n-1, :x])
+                psi_table[n, x] = psi_table[n, x-1]+psi_table[n-1, x-1]
     return psi_table[N-1, X-1]
-
 if __name__ == "__main__":
     print(calc_psi(12, 800))
