@@ -18,7 +18,8 @@ def dijkstra(puzzle):
     goal = puzzle.goal_state
 
     # the fringe is the queue to pop items from
-    fringe = [(0, initial)]
+    fringe = []
+    heapq.heappush(fringe, (0, initial))
     # concluded contains states that were already resolved
     concluded = set()
     # a mapping from state (as a string) to the currently minimal distance (int).
@@ -28,8 +29,17 @@ def dijkstra(puzzle):
     prev = {initial.to_string(): None}
 
     while len(fringe) > 0:
-        # remove the following line and complete the algorithm
-        assert False
+        du, u = heapq.heappop(fringe)   # current minimum
+        if u.to_string() not in concluded:
+            concluded.add(u.to_string())
+            curr_actions = u.get_actions()
+            #print("at: {}".format(u.to_string()))
+            for action in curr_actions:
+                v = u.apply_action(action)
+                heapq.heappush(fringe, (du+1, v))
+                distances[v.to_string()] = du+1
+                prev[v.to_string()] = u
+
     return prev
 
 

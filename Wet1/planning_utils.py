@@ -6,9 +6,13 @@ def traverse(goal_state, prev):
     :return: a list of (state, actions) such that the first element is (start_state, a_0), and the last is
     (goal_state, None)
     '''
-    result = [(goal_state, None)]
-    # remove the following line and complete the algorithm
-    assert False
+    curr_prev = prev[goal_state.to_string()]
+    result = [(goal_state, curr_prev)]
+    print("Im alive (and hot)")
+    while curr_prev:
+        curr = curr_prev
+        curr_prev = prev[curr.to_string()]
+        result.append((curr, curr_prev))
     return result
 
 

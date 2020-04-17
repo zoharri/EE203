@@ -1,6 +1,5 @@
 import os
 
-
 class State:
     def __init__(self, s=None):
         if s is None:
