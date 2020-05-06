@@ -1,52 +1,57 @@
 import numpy as np
 from cartpole_cont import CartPoleContEnv
-import matplotlib
 import matplotlib.pyplot as plt
-from pendulum_dynamics import get_A_LQR as get_A
-from pendulum_dynamics import get_B_LQR as get_B
+from pendulum_dynamics import get_A_iLQR as get_A
+from pendulum_dynamics import get_B_iLQR as get_B
+from pendulum_dynamics import get_D_iLQR as get_D
 
 
+"""
+# This is not Working :(
+"""
 
-def find_lqr_control_input(cart_pole_env, limited_force = False):
+
+def find_lqr_for_ilqr(cart_pole_env, xs_prev, us_prev, limited_force = False):
     '''
     implements the LQR algorithm
     :param cart_pole_env: to extract all the relevant constants
+    xs_prev, us_prev - rollout to linearize the dynamics around
+    limited_force - is the force limited in the environment
     :return: a tuple (xs, us, Ks). xs - a list of (predicted) states, each element is a numpy array of shape (4,1).
     us - a list of (predicted) controls, each element is a numpy array of shape (1,1). Ks - a list of control transforms
     to map from state to action of shape (1,4).
     '''
     assert isinstance(cart_pole_env, CartPoleContEnv)
-
-    # TODO - you first need to compute A and B for LQR
-    A = get_A(cart_pole_env)
-    B = get_B(cart_pole_env)
-
-    # TODO - Q and R should not be zero, find values that work, hint: all the values can be <= 1.0
-    w1 = 0.7
-    w2 = 1
-    w3 = 0.05
+    w1 = 0.9
+    w2 = 0.5
+    w3 = 0.1
     if limited_force:
         w3 = 0.5
 
-    Q = np.array([
-        [w1, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, w2, 0],
-        [0, 0, 0, 0]
+    C = np.array([
+        [w1, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, w2, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, w3]
     ])
+    A =  get_A()
+    B =  get_B()
+    D =  get_D()
+    F = np.concatenate((A,B),1)
+    f = D
 
-    R = np.array([w3])
 
-    # TODO - you need to compute these matrices in your solution, but these are not returned.
-    Ps = []
-
-    # TODO - these should be returned see documentation above
     us = []
-    xs = [np.expand_dims(cart_pole_env.state, 1)]
+    xs = [xs_prev[0]]
+
     Ks = []
     Ps.append(Q)
 
     for step in range(cart_pole_env.planning_steps):
+        A = get_A(cart_pole_env, xs_prev[-step], us_prev[-step])
+        B = get_B(cart_pole_env, xs_prev[-step], us_prev[-step])
+
         curr_P = Q+A.T@Ps[-1]@A-A.T@Ps[-1]@B*np.reciprocal(R+B.T@Ps[-1]@B)*B.T@Ps[-1]@A
         curr_K = -np.reciprocal(B.T@Ps[-1]@B+R)*B.T@Ps[-1]@A
         Ps.append(curr_P)
@@ -55,11 +60,43 @@ def find_lqr_control_input(cart_pole_env, limited_force = False):
     Ks.reverse()
     Ps.reverse()
     for step in range(cart_pole_env.planning_steps):
-        curr_u = Ks[step]@xs[-1]
+        curr_u = Ks[step]@(xs[-1]-xs_prev[step]) + us_prev[step]
+        A = get_A(cart_pole_env, xs[-1], curr_u)
+        B = get_B(cart_pole_env, xs[-1], curr_u)
         next_X = A@xs[-1]+B*curr_u
+        next_X[2] = np.mod(next_X[2] + np.pi, 2 * np.pi) - np.pi
         xs.append(next_X)
         us.append(curr_u)
 
+
+    assert len(xs) == cart_pole_env.planning_steps + 1, "if you plan for x states there should be X+1 states here"
+    assert len(us) == cart_pole_env.planning_steps, "if you plan for x states there should be X actions here"
+    for x in xs:
+        assert x.shape == (4, 1), "make sure the state dimension is correct: should be (4,1)"
+    for u in us:
+        assert u.shape == (1, 1), "make sure the action dimension is correct: should be (1,1)"
+    return xs, us, Ks
+
+
+def find_ilqr_control_input(cart_pole_env, limited_force = False, n_iter = 100):
+    '''
+    implements the iLQR algorithm
+    :param cart_pole_env: to extract all the relevant constants
+    :return: a tuple (xs, us, Ks). xs - a list of (predicted) states, each element is a numpy array of shape (4,1).
+    us - a list of (predicted) controls, each element is a numpy array of shape (1,1). Ks - a list of control transforms
+    to map from state to action of shape (1,4).
+    '''
+    assert isinstance(cart_pole_env, CartPoleContEnv)
+
+    # Initialize us with the LQR output at the initial state
+    xs = [np.zeros((4, 1)) for i in range(cart_pole_env.planning_steps + 1)]
+    us = [np.zeros(1) for i in range(cart_pole_env.planning_steps)]
+
+    for iter in range(n_iter):
+        print("at ILQR iter: {} ".format(str(iter)))
+        xs, us, Ks = find_lqr_for_ilqr(cart_pole_env, xs, us, limited_force)
+
+    #xs, us, Ks = find_lqr_for_ilqr(cart_pole_env, xs_0, us_0, limited_force)
 
     assert len(xs) == cart_pole_env.planning_steps + 1, "if you plan for x states there should be X+1 states here"
     assert len(us) == cart_pole_env.planning_steps, "if you plan for x states there should be X actions here"
@@ -80,19 +117,16 @@ def print_diff(iteration, planned_theta, actual_theta, planned_action, actual_ac
     ))
 
 
-def excecute_LQR(init_theta, use_predicted, limited_force=False):
+def excecute_iLQR(init_theta, use_predicted, limited_force=False):
     curr_theta_values = []
     env = CartPoleContEnv(initial_theta=init_theta)
 
-    # print the matrices used in LQR
-    print('A: {}'.format(get_A(env)))
-    print('B: {}'.format(get_B(env)))
 
     # start a new episode
     actual_state = env.reset()
     env.render()
     # use LQR to plan controls
-    xs, us, Ks = find_lqr_control_input(env, limited_force)
+    xs, us, Ks = find_ilqr_control_input(env, limited_force)
     # run the episode until termination, and print the difference between planned and actual
     is_done = False
     iteration = 0
@@ -150,8 +184,8 @@ if __name__ == '__main__':
     #unstable_theta = 0.05 * np.pi
     #plot_thetas([0.05 * np.pi, 0.005 * np.pi, 0.0005 * np.pi], True)
     #plot_thetas([0.1 * np.pi, unstable_theta, 0.5*unstable_theta], False)
-    #excecute_LQR(0.1*np.pi, False, True)
-    plot_thetas([0.1 * np.pi, unstable_theta, 0.5 * unstable_theta], False, False)
+    excecute_iLQR(0.4*np.pi, False, False)
+    #plot_thetas([0.1 * np.pi, unstable_theta, 0.5 * unstable_theta], False, False)
 
     """
     env = CartPoleContEnv(initial_theta=np.pi * 0.323)

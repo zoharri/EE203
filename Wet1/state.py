@@ -4,8 +4,6 @@ class State:
     def __init__(self, s=None):
         if s is None:
             self._array = [[str(3*i + j) for j in range(3)] for i in range(3)]
-            #self._array = [[str(3*i + j) for j in range(1, 4)] for i in range(3)]
-            #self._array[2][2] = str(0)
         else:
             array = [[c for c in line.split(' ')] for line in s.split(os.linesep)]
             assert len(array) == 3

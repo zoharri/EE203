@@ -18,11 +18,10 @@ def a_star(puzzle):
     goal = puzzle.goal_state
 
     # this is the heuristic function for of the start state
-    initial_to_goal_heuristic = initial.get_num_incorrect(goal) # MD
+    initial_to_goal_heuristic = initial.get_manhattan_distance(goal)
 
     # the fringe is the queue to pop items from
-    fringe = []
-    heapq.heappush(fringe, (0+initial_to_goal_heuristic, initial))
+    fringe = [(initial_to_goal_heuristic, initial)]
     # concluded contains states that were already resolved
     concluded = set()
     # a mapping from state (as a string) to the currently minimal distance (int).
@@ -32,21 +31,21 @@ def a_star(puzzle):
     prev = {initial.to_string(): None}
 
     while len(fringe) > 0:
-        du, u = heapq.heappop(fringe)  # current minimum
+        _, u = heapq.heappop(fringe)  # current minimum including heuristic
+        if u.to_string() in concluded:
+            continue
+        concluded.add(u.to_string())
         if u.is_same(goal):
             break
-        if u.to_string() not in concluded:
-            concluded.add(u.to_string())
-            curr_actions = u.get_actions()
-            for action in curr_actions:
-                v = u.apply_action(action)  #MD!
-                heapq.heappush(fringe, (du + 1 + v.get_num_incorrect(goal), v))    # added the heuristic function
-                if not v.to_string() in distances.keys() or du + 1 < distances[v.to_string()]:
-                    distances[v.to_string()] = du + 1
-                    prev[v.to_string()] = u
+        curr_actions = u.get_actions()
+        for action in curr_actions:
+            v = u.apply_action(action)
+            if v.to_string() not in concluded:
+                heapq.heappush(fringe, (distances[u.to_string()] + 1 + v.get_manhattan_distance(goal), v))
+                distances[v.to_string()] = distances[u.to_string()] + 1
+                prev[v.to_string()] = u
     print(len(concluded))
     return prev
-
 
 def solve(puzzle):
     # compute mapping to previous using dijkstra
@@ -68,6 +67,7 @@ if __name__ == '__main__':
     goal_state = initial_state
     for a in actions:
         goal_state = goal_state.apply_action(a)
+    #goal_state = State("8 6 7\n2 5 4\n3 0 1")
     puzzle = Puzzle(initial_state, goal_state)
     print('original number of actions:{}'.format(len(actions)))
     solution_start_time = datetime.datetime.now()

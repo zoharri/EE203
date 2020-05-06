@@ -2,18 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="00998fb7-e571-43bc-a4c6-0ca4cd933a2c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../Wet1/a_star.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/cartpole_cont.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/dijkstra.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/lqr.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/planning_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/puzzle.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/queue_ignore_example.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Wet1/state.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Dry1.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Dry1.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Q2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Q2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +29,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../ReId/a2z_utils" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunManager" selected="Python.Q2">
@@ -107,6 +96,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1587192485146">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="776" y="310" width="424" height="484" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1587192485146" />
     <state width="1830" height="278" key="GridCell.Tab.0.bottom" timestamp="1587114386685">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
@@ -152,9 +145,10 @@
     </state>
     <state x="277" y="55" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1585756241613" />
     <state x="401" y="97" key="SettingsEditor/67.27.1853.1053@67.27.1853.1053" timestamp="1587113654774" />
-    <state x="136" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1586798929837">
-      <screen x="0" y="0" width="1536" height="824" />
+    <state x="231" y="329" key="com.intellij.ide.util.TipDialog" timestamp="1587192463342">
+      <screen x="67" y="27" width="1853" height="1053" />
     </state>
     <state x="136" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1586798929837" />
+    <state x="231" y="329" key="com.intellij.ide.util.TipDialog/67.27.1853.1053@67.27.1853.1053" timestamp="1587192463342" />
   </component>
 </project>
