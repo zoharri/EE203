@@ -16,9 +16,6 @@ Zohar Rimon - zohar.rimon@campus.technion.ac.il
 
 Project Link: [https://github.com/zoharri/CS203](https://github.com/zoharri/EE203)
 
-# CONTRIBUTORS
-Zohar Rimon and Yair Amar are equal contributors to this repository
-
 
 
 
