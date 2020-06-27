@@ -12,7 +12,7 @@ class LinearPolicy:
     def set_w(self, w):
         assert self.w.shape == w.shape
         change = np.linalg.norm(w - self.w)
-        print(f'changed w, norm diff is {change}')
+        print('changed w, norm diff is {}'.format(change))
         self.w = w
         return change
 

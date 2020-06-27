@@ -14,8 +14,8 @@ class DataTransformer:
     def set(self, state_mean, state_std):
         self.state_mean = state_mean
         self.state_std = state_std
-        print(f'data mean {state_mean}')
-        print(f'data std {state_std}')
+        print('data mean {}'.format(state_mean))
+        print('data std {}'.format(state_std))
 
     def transform_states(self, states):
         standardized_states = states - self.state_mean
